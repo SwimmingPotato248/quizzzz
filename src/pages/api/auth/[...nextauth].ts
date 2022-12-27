@@ -1,29 +1,56 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 // Prisma adapter for NextAuth, optional and can be removed
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-import { env } from "../../../env/server.mjs";
-import { prisma } from "../../../server/db/client";
+import { prisma } from "@/src/server/db/client";
+import * as argon2 from "argon2";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
+    session: async ({ session, token }) => {
+      if (session?.user) {
+        session.user.id = token.uid as string;
       }
       return session;
     },
+    jwt: async ({ user, token }) => {
+      if (user) {
+        token.uid = user.id;
+      }
+      return token;
+    },
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60,
   },
   // Configure one or more authentication providers
-  adapter: PrismaAdapter(prisma),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials || !credentials.password || !credentials.username)
+          return null;
+        const user = await prisma.user.findUnique({
+          where: { username: credentials.username },
+        });
+
+        if (!user) return null;
+
+        const pwMatch = await argon2.verify(
+          user.password,
+          credentials.password
+        );
+
+        if (!pwMatch) return null;
+        else return user;
+      },
     }),
-    // ...add more providers here
   ],
 };
 
