@@ -36,9 +36,13 @@ const SignupForm: FC = () => {
     defaultValues: { username: "", password: "", passwordConfirmation: "" },
   });
   const { mutate: signUp } = trpc.auth.signUp.useMutation({
-    onSuccess(data) {
+    onSuccess() {
       console.log("Done");
-      signIn("credentials", { ...data, callbackUrl: "/" });
+      signIn("credentials", {
+        username: getValues("username"),
+        password: getValues("password"),
+        callbackUrl: "/",
+      });
     },
   });
   const { mutateAsync: checkUnique } = trpc.auth.checkUnique.useMutation();

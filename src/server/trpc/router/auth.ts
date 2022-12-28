@@ -33,7 +33,6 @@ export const authRouter = router({
           password,
         },
       });
-      return { username: input.username, password: input.password };
     }),
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;
