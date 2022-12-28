@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "../utils/trpc";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import Spinner from "./Spinner";
 
 const signupFormSchema = z.object({
   username: z
@@ -150,11 +151,7 @@ const SignupForm: FC = () => {
           submitting
         }
       >
-        {submitting ? (
-          <div className="h-6 w-6 animate-spin rounded-full border-t-2 border-r-2 border-black" />
-        ) : (
-          "Sign Up"
-        )}
+        {submitting ? <Spinner /> : "Sign Up"}
       </button>
     </form>
   );

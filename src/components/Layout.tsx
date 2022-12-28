@@ -12,18 +12,29 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
   return (
     <>
-      <nav>
-        <div>Navbar</div>
-        <div>
+      <nav className="mb-8 flex items-center justify-between bg-amber-200 px-4 py-3">
+        <Link className="text-2xl font-bold text-amber-700" href={"/"}>
+          Quizzzz
+        </Link>
+        <div className="flex gap-4 px-2">
           {session?.user ? (
             <>
               <div>{session.user.name}</div>
-              <button onClick={() => signOut()}>Log Out</button>
+              <button
+                onClick={() => signOut()}
+                className="hover:text-amber-900"
+              >
+                Log Out
+              </button>
             </>
           ) : (
             <>
-              <Link href={"/signup"}>Sign Up</Link>
-              <Link href={"/signin"}>Log In</Link>
+              <Link href={"/signup"} className="hover:text-amber-900">
+                Sign Up
+              </Link>
+              <Link href={"/signin"} className="hover:text-amber-900">
+                Log In
+              </Link>
             </>
           )}
         </div>

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState, type FC } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import Spinner from "./Spinner";
 
 const signinFormSchema = z.object({
   username: z.string(),
@@ -12,6 +13,7 @@ const signinFormSchema = z.object({
 
 const SigninForm: FC = () => {
   const [error, setError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, handleSubmit } =
     useForm<z.infer<typeof signinFormSchema>>();
   const router = useRouter();
@@ -19,6 +21,7 @@ const SigninForm: FC = () => {
   const onSubmit: SubmitHandler<z.infer<typeof signinFormSchema>> = async (
     data
   ) => {
+    setIsSubmitting(true);
     const res = await signIn("credentials", {
       username: data.username,
       password: data.password,
@@ -26,6 +29,7 @@ const SigninForm: FC = () => {
     });
     if (res?.error) {
       setError(true);
+      setIsSubmitting(false);
     } else {
       router.push("/");
     }
@@ -55,8 +59,11 @@ const SigninForm: FC = () => {
           Sign Up
         </Link>
       </div>
-      <button className="mx-auto rounded-lg bg-blue-600 px-4 py-2 font-bold text-blue-100 hover:bg-blue-700">
-        Login
+      <button
+        className="mx-auto rounded-lg bg-blue-600 px-4 py-2 font-bold text-blue-100 hover:bg-blue-700 disabled:cursor-wait"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? <Spinner /> : "Login"}
       </button>
     </form>
   );
