@@ -7,6 +7,9 @@ import * as argon2 from "argon2";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
+  pages: {
+    signIn: "/signin",
+  },
   callbacks: {
     session: async ({ session, token }) => {
       if (session?.user) {
@@ -48,7 +51,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!pwMatch) return null;
-        else return user;
+        else return { id: user.id, name: user.username };
       },
     }),
   ],
