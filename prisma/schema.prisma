@@ -15,14 +15,38 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String   @unique
+  id         String     @id @default(uuid())
+  username   String     @unique
   password   String
-  role       Role     @default(User)
-  created_at DateTime @default(now())
+  role       Role       @default(User)
+  created_at DateTime   @default(now())
+  questions  Question[]
 }
 
 enum Role {
   Admin
   User
+}
+
+model Question {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  content String
+  answers Answer[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Answer {
+  id          String   @id @default(uuid())
+  question    Question @relation(fields: [question_id], references: [id])
+  question_id String   @map("questionId")
+
+  content String
+  status  Boolean
+
+  created_at DateTime @default(now())
 }
