@@ -57,7 +57,7 @@ const CreateQuestionForm: FC = () => {
           <p className="">Question content</p>
           <textarea
             {...register("content")}
-            className="w-full resize-none rounded"
+            className="w-full resize-none rounded border-amber-700 focus:border-amber-700 focus:ring-amber-600"
             cols={37}
             rows={4}
           ></textarea>
@@ -99,7 +99,12 @@ const CreateQuestionForm: FC = () => {
             <span>Add more answers</span>
           </button>
         </div>
-        <button>Submit</button>
+        <button
+          type="submit"
+          className="rounded-sm bg-amber-800 text-xl font-bold text-amber-100 hover:bg-amber-700"
+        >
+          Create Question
+        </button>
       </form>
       <Transition
         as={Fragment}
