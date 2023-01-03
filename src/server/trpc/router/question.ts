@@ -51,4 +51,9 @@ export const questionRouter = router({
       }
       return question;
     }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.question.delete({ where: { id: input.id } });
+    }),
 });

@@ -21,11 +21,26 @@ model User {
   role       Role       @default(User)
   created_at DateTime   @default(now())
   questions  Question[]
+  exams      Exam[]
 }
 
 enum Role {
   Admin
   User
+}
+
+model Exam {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  questions Question[]
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Question {
@@ -35,6 +50,7 @@ model Question {
 
   content String
   answers Answer[]
+  exams   Exam[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

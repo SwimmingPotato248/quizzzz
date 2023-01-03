@@ -1,3 +1,4 @@
+import GoBackButton from "@/src/components/GoBackButton";
 import { trpc } from "@/src/utils/trpc";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { type NextPage } from "next";
@@ -10,6 +11,7 @@ const QuestionPage: NextPage = () => {
   const { data } = trpc.question.getQuestions.useQuery({ query });
   return (
     <div className="mx-auto mt-16 w-[700px]">
+      <GoBackButton />
       <Link
         href={"/my/questions/new"}
         className="mx-auto mb-4 block w-72 bg-lime-500 py-2 text-center text-lg font-bold text-lime-100 hover:bg-lime-600"
