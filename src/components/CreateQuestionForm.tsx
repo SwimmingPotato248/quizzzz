@@ -131,7 +131,7 @@ const CreateQuestionForm: FC = () => {
               </Dialog.Description>
               <div className="mt-2 flex w-full items-center justify-end gap-4">
                 <Link
-                  href={"/"}
+                  href={"/my/questions"}
                   className="flex items-center gap-2 rounded-full border border-red-600 bg-red-100 px-4 py-2 font-semibold text-red-700"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />

@@ -21,7 +21,7 @@ model User {
   role       Role       @default(User)
   created_at DateTime   @default(now())
   questions  Question[]
-  exams      Exam[]
+  quizzes    Quiz[]
 }
 
 enum Role {
@@ -29,7 +29,7 @@ enum Role {
   User
 }
 
-model Exam {
+model Quiz {
   id          String @id @default(uuid())
   title       String
   description String
@@ -50,7 +50,7 @@ model Question {
 
   content String
   answers Answer[]
-  exams   Exam[]
+  quizzes Quiz[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
