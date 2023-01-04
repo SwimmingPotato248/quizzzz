@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const quizRouter = router({
   create: protectedProcedure
@@ -25,5 +26,22 @@ export const quizRouter = router({
       } catch (e) {
         console.error(e);
       }
+    }),
+  getMyQuizzes: protectedProcedure.query(async ({ ctx }) => {
+    const quizzes = await ctx.prisma.quiz.findMany({
+      where: { user_id: ctx.session.user.id },
+    });
+    return quizzes;
+  }),
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const quiz = await ctx.prisma.quiz.findUnique({
+        where: { id: input.id },
+        include: { questions: true },
+      });
+      if (quiz?.user_id !== ctx.session.user.id)
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      return quiz;
     }),
 });
