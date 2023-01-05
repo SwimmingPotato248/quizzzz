@@ -16,18 +16,20 @@ const QuizzesPage: NextPage = () => {
         </Link>
       </div>
       <div className="py-2">
-        <p className="text-center">Your Quizzes</p>
-        {data?.map((quiz) => {
-          return (
-            <Link
-              key={quiz.id}
-              href={`/my/quizzes/${quiz.id}`}
-              className="block bg-fuchsia-200 px-4 py-2 text-fuchsia-800"
-            >
-              <p>{quiz.title}</p>
-            </Link>
-          );
-        })}
+        <p className="text-center text-lg font-semibold">Your Quizzes</p>
+        <div className="flex flex-col divide-y divide-violet-400">
+          {data?.map((quiz) => {
+            return (
+              <Link
+                key={quiz.id}
+                href={`/my/quizzes/${quiz.id}`}
+                className="block bg-fuchsia-200 px-4 py-2 text-fuchsia-800"
+              >
+                <p>{quiz.title}</p>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

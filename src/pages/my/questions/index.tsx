@@ -1,4 +1,3 @@
-import GoBackButton from "@/src/components/GoBackButton";
 import { trpc } from "@/src/utils/trpc";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { type NextPage } from "next";
@@ -10,13 +9,19 @@ const QuestionPage: NextPage = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { data } = trpc.question.getQuestions.useQuery({ query });
   return (
-    <div className="mx-auto mt-16 w-[700px]">
-      <GoBackButton />
+    <div className="mx-auto mt-16 w-max">
       <Link
         href={"/my/questions/new"}
         className="mx-auto mb-4 block w-72 bg-lime-500 py-2 text-center text-lg font-bold text-lime-100 hover:bg-lime-600"
       >
         Create more question
+      </Link>
+      <div className="text-center">~ or ~</div>
+      <Link
+        href={"/my/quizzes"}
+        className="mx-auto block w-max py-2 text-center text-lg text-lime-600 underline"
+      >
+        View your quizzes
       </Link>
       <div className="">
         <form
@@ -50,7 +55,7 @@ const QuestionPage: NextPage = () => {
             <MagnifyingGlassIcon className="h-6 w-6 cursor-pointer" />
           </button>
         </form>
-        <div className="mx-auto flex w-[660px] flex-wrap gap-4">
+        <div className="mx-auto grid w-max grid-cols-1 gap-4 md:grid-cols-2">
           {data?.map((question) => {
             return (
               <Link

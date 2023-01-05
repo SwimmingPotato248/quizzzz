@@ -7,7 +7,7 @@ const QuizDetailPage: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   if (typeof id !== "string") return <div>Error</div>;
-  const { data } = trpc.quiz.getOne.useQuery({ id });
+  const { data } = trpc.quiz.getMyOne.useQuery({ id });
   return (
     <div className="mx-auto mt-8 w-min">
       <GoBackButton />

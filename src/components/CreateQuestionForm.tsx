@@ -83,7 +83,7 @@ const CreateQuestionForm: FC = () => {
                 </div>
                 <input
                   type={"text"}
-                  {...register(`answers.${index}.content`)}
+                  {...register(`answers.${index}.content` as const)}
                   className="w-full rounded border-amber-700 focus:border-amber-700 focus:ring-amber-600"
                   autoComplete="off"
                 />
