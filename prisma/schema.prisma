@@ -15,13 +15,14 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  username   String     @unique
-  password   String
-  role       Role       @default(User)
-  created_at DateTime   @default(now())
-  questions  Question[]
-  quizzes    Quiz[]
+  id          String        @id @default(uuid())
+  username    String        @unique
+  password    String
+  role        Role          @default(User)
+  created_at  DateTime      @default(now())
+  questions   Question[]
+  quizzes     Quiz[]
+  QuizAttempt QuizAttempt[]
 }
 
 enum Role {
@@ -52,8 +53,9 @@ model Question {
   answers Answer[]
   quizzes Quiz[]
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  QuizAttemptDetail QuizAttemptDetail[]
 }
 
 model Answer {
@@ -64,5 +66,30 @@ model Answer {
   content String
   status  Boolean
 
-  created_at DateTime @default(now())
+  created_at        DateTime            @default(now())
+  QuizAttemptDetail QuizAttemptDetail[]
+}
+
+model QuizAttempt {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  score Int @default(0)
+
+  created_at        DateTime            @default(now())
+  QuizAttemptDetail QuizAttemptDetail[]
+}
+
+model QuizAttemptDetail {
+  id              String      @id @default(uuid())
+  quiz_attempt    QuizAttempt @relation(fields: [quiz_attempt_id], references: [id])
+  quiz_attempt_id String
+
+  question    Question @relation(fields: [question_id], references: [id])
+  answer      Answer   @relation(fields: [answer_id], references: [id])
+  question_id String
+  answer_id   String
+
+  correct Boolean
 }
