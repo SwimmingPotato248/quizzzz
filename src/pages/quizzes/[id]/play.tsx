@@ -1,7 +1,7 @@
 import GoBackButton from "@/src/components/GoBackButton";
 import { trpc } from "@/src/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
-import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
@@ -116,7 +116,7 @@ const TakeQuizPage: NextPage = () => {
                       return (
                         <label
                           key={answer.id}
-                          className="flex w-96 items-center"
+                          className="relative flex w-96 items-center"
                         >
                           <input
                             type={"radio"}
@@ -124,9 +124,10 @@ const TakeQuizPage: NextPage = () => {
                             className="peer hidden"
                             {...register(`answers.${index}.answer_id` as const)}
                           />
-                          <div className="block w-full cursor-pointer rounded-full border border-slate-400 bg-slate-300 py-2 px-4  text-lg text-slate-900 hover:bg-slate-400 peer-checked:border-emerald-700 peer-checked:bg-emerald-600 peer-checked:text-emerald-200 peer-checked:ring-emerald-600">
+                          <div className="block w-full cursor-pointer rounded-full border border-l-4 border-b-4 border-slate-500 bg-slate-300 py-2  px-4 text-lg text-slate-900 hover:bg-slate-400 peer-checked:border-l-2 peer-checked:border-b-2 peer-checked:border-emerald-700 peer-checked:bg-emerald-600 peer-checked:text-emerald-200 peer-checked:ring-emerald-600">
                             {answer.content}
                           </div>
+                          <CheckCircleIcon className="absolute right-4 hidden h-6 w-6 text-white peer-checked:block" />
                         </label>
                       );
                     })}

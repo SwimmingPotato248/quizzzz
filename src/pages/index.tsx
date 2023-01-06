@@ -18,11 +18,11 @@ const Home: NextPage = () => {
               <div className="absolute left-0 top-0 h-full w-4 bg-rose-600" />
               <Link
                 href={`/quizzes/${quiz.id}`}
-                className="text-2xl font-bold hover:underline hover:decoration-2"
+                className="text-3xl font-bold hover:underline hover:decoration-2"
               >
                 {quiz.title}
               </Link>
-              <p className="text-sm">{quiz.description}</p>
+              <p className="text-zinc-600">{quiz.description}</p>
             </div>
           );
         })}
