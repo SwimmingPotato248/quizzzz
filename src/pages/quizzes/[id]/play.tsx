@@ -1,4 +1,6 @@
 import GoBackButton from "@/src/components/GoBackButton";
+import Loading from "@/src/components/Loading";
+import Spinner from "@/src/components/Spinner";
 import { trpc } from "@/src/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
@@ -26,6 +28,7 @@ const TakeQuizPage: NextPage = () => {
   const [transitionLeft, setTransitionLeft] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [score, setScore] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = router.query;
   const { mutate } = trpc.quizAttempt.submitAttempt.useMutation({
     onSuccess(data) {
@@ -33,7 +36,7 @@ const TakeQuizPage: NextPage = () => {
       setIsOpen(true);
     },
   });
-  const { data } = trpc.quiz.getOne.useQuery({
+  const { data, isLoading, isError } = trpc.quiz.getOne.useQuery({
     id: typeof id === "string" ? id : "",
   });
   const { register, handleSubmit } = useForm<FormSchemaType>({
@@ -50,11 +53,14 @@ const TakeQuizPage: NextPage = () => {
     },
   });
 
-  if (typeof id !== "string") return <div>Error...</div>;
+  if (typeof id !== "string" || isError) return <div>Error...</div>;
 
   const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+    setIsSubmitting(true);
     mutate({ quiz_id: id, answers: data.answers });
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className="mx-auto w-max">
@@ -138,10 +144,15 @@ const TakeQuizPage: NextPage = () => {
           })}
         </div>
 
-        <button className="mx-auto mt-8 block rounded-2xl bg-sky-700 px-8 py-4 text-xl font-bold text-sky-100 hover:bg-sky-600">
-          Submit
+        <button
+          className="mx-auto mt-8 block rounded-2xl bg-sky-700 px-8 py-4 text-xl font-bold text-sky-100 hover:bg-sky-600 disabled:cursor-wait disabled:bg-sky-400"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <Spinner /> : "Submit"}
         </button>
       </form>
+
+      {/* Score modal */}
       <Transition
         as={Fragment}
         show={isOpen}
@@ -174,7 +185,10 @@ const TakeQuizPage: NextPage = () => {
                 <p>Do you want to play again</p>
                 <div className="mt-2 flex w-full items-center justify-end gap-4">
                   <GoBackButton />
-                  <button className="rounded-xl bg-blue-600 px-4 py-2 text-blue-100 hover:bg-blue-500">
+                  <button
+                    className="rounded-xl bg-blue-600 px-4 py-2 text-blue-100 hover:bg-blue-500"
+                    onClick={() => router.reload()}
+                  >
                     Play again
                   </button>
                 </div>

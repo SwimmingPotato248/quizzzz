@@ -1,3 +1,4 @@
+import Loading from "@/src/components/Loading";
 import { trpc } from "@/src/utils/trpc";
 import { type NextPage } from "next";
 import Link from "next/link";
@@ -7,7 +8,10 @@ const QuizPage: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   if (typeof id !== "string") return <div>Error...</div>;
-  const { data } = trpc.quiz.getOne.useQuery({ id });
+  const { data, isLoading, isError } = trpc.quiz.getOne.useQuery({ id });
+  if (isLoading) return <Loading />;
+  if (isError)
+    return <div className="mt-16 text-center text-3xl">Error...</div>;
   return (
     <div className="mx-auto mt-12 w-96">
       <p className="text-center text-3xl font-semibold text-sky-700">
