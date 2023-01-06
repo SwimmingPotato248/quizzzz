@@ -6,6 +6,7 @@ import { ArrowLeftIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import { trpc } from "../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import Link from "next/link";
+import Spinner from "./Spinner";
 
 const answers = z.object({
   content: z.string().min(1),
@@ -21,6 +22,7 @@ type FormSchemaType = z.infer<typeof formSchema>;
 
 const CreateQuestionForm: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const { mutate } = trpc.question.create.useMutation({
     onSuccess() {
       setIsOpen(true);
@@ -44,6 +46,7 @@ const CreateQuestionForm: FC = () => {
   });
 
   const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+    setSubmitting(true);
     mutate(data);
   };
 
@@ -101,9 +104,10 @@ const CreateQuestionForm: FC = () => {
         </div>
         <button
           type="submit"
-          className="rounded-sm bg-amber-800 text-xl font-bold text-amber-100 hover:bg-amber-700"
+          className="rounded-sm bg-amber-800 text-xl font-bold text-amber-100 hover:bg-amber-700 disabled:cursor-wait disabled:bg-amber-200"
+          disabled={submitting}
         >
-          Create Question
+          {submitting ? <Spinner /> : "Create Question"}
         </button>
       </form>
       <Transition
@@ -116,7 +120,14 @@ const CreateQuestionForm: FC = () => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <Dialog open={isOpen} onClose={setIsOpen} className="relative z-50">
+        <Dialog
+          open={isOpen}
+          onClose={() => {
+            setSubmitting(false);
+            setIsOpen(false);
+          }}
+          className="relative z-50"
+        >
           <div className="fixed inset-0 bg-black/75" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <Dialog.Panel
@@ -139,6 +150,7 @@ const CreateQuestionForm: FC = () => {
                 </Link>
                 <button
                   onClick={() => {
+                    setSubmitting(false);
                     setIsOpen(false);
                     reset();
                   }}
