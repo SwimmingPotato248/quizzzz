@@ -40,6 +40,7 @@ export const quizAttemptRouter = router({
         const attempt = await ctx.prisma.quizAttempt.create({
           data: {
             user_id: ctx.session.user.id,
+            quizId: input.quiz_id,
           },
         });
         await ctx.prisma.quizAttemptDetail.createMany({
@@ -53,5 +54,16 @@ export const quizAttemptRouter = router({
         });
       }
       return score;
+    }),
+  getLeaderboard: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.quizAttempt.findMany({
+        where: { quizId: input.id },
+        orderBy: [{ score: "desc" }, { created_at: "asc" }],
+        distinct: ["user_id"],
+        include: { user: { select: { username: true, id: true } } },
+        take: 10,
+      });
     }),
 });

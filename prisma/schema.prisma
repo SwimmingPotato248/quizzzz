@@ -40,8 +40,9 @@ model Quiz {
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  QuizAttempt QuizAttempt[]
 }
 
 model Question {
@@ -74,6 +75,9 @@ model QuizAttempt {
   id      String @id @default(uuid())
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
+
+  quiz   Quiz   @relation(fields: [quizId], references: [id])
+  quizId String
 
   score Int @default(0)
 

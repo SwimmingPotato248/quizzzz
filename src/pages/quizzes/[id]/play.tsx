@@ -73,6 +73,7 @@ const TakeQuizPage: NextPage = () => {
       <div className="flex justify-center gap-8 px-6">
         <button
           type="button"
+          className="rounded-full bg-green-300 px-3 py-1 text-lg text-green-900 hover:bg-green-400"
           onClick={() => {
             setTransitionLeft(true);
             setCurrent((prev) => {
@@ -86,6 +87,7 @@ const TakeQuizPage: NextPage = () => {
 
         <button
           type="button"
+          className="rounded-full bg-green-300 px-3 py-1 text-lg text-green-900 hover:bg-green-400"
           onClick={() => {
             setTransitionLeft(false);
             setCurrent((prev) => {
