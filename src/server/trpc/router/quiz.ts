@@ -47,7 +47,7 @@ export const quizRouter = router({
   getQuizzes: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.quiz.findMany({});
   }),
-  getOne: protectedProcedure
+  getOne: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const quiz = await ctx.prisma.quiz.findUnique({

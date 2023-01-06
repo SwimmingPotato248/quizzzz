@@ -25,6 +25,22 @@ export const questionRouter = router({
       const answers = input.answers.map((a) => {
         return { ...a, question_id: question.id };
       });
+
+      ((answers: any[]) => {
+        let currentIndex = answers.length;
+        while (currentIndex !== 0) {
+          const randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+
+          [answers[currentIndex], answers[randomIndex]] = [
+            answers[randomIndex],
+            answers[currentIndex],
+          ];
+        }
+
+        return answers;
+      })(answers);
+
       await ctx.prisma.answer.createMany({ data: answers });
     }),
   getQuestions: protectedProcedure
@@ -33,7 +49,7 @@ export const questionRouter = router({
       return await ctx.prisma.question.findMany({
         where: {
           user_id: ctx.session.user.id,
-          content: { contains: input.query },
+          content: { contains: input.query, mode: "insensitive" },
         },
         orderBy: { created_at: "desc" },
       });

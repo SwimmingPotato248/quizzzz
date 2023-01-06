@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 
 export const quizAttemptRouter = router({
-  submitAttempt: protectedProcedure
+  submitAttempt: publicProcedure
     .input(
       z.object({
         quiz_id: z.string(),
@@ -15,11 +15,6 @@ export const quizAttemptRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const attempt = await ctx.prisma.quizAttempt.create({
-        data: {
-          user_id: ctx.session.user.id,
-        },
-      });
       const quiz = await ctx.prisma.quiz.findUnique({
         where: {
           id: input.quiz_id,
@@ -37,20 +32,26 @@ export const quizAttemptRouter = router({
         )?.id;
         return {
           ...answer,
-          quiz_attempt_id: attempt.id,
           correct: answer.answer_id === correct_answer_id,
         };
       });
-      await ctx.prisma.quizAttemptDetail.createMany({
-        data: attemptDetail,
-      });
-      const score = await ctx.prisma.quizAttemptDetail.count({
-        where: { quiz_attempt_id: attempt.id, correct: true },
-      });
-      await ctx.prisma.quizAttempt.update({
-        where: { id: attempt.id },
-        data: { score },
-      });
+      const score = attemptDetail.filter((e) => e.correct === true).length;
+      if (ctx.session?.user) {
+        const attempt = await ctx.prisma.quizAttempt.create({
+          data: {
+            user_id: ctx.session.user.id,
+          },
+        });
+        await ctx.prisma.quizAttemptDetail.createMany({
+          data: attemptDetail.map((e) => {
+            return { ...e, quiz_attempt_id: attempt.id };
+          }),
+        });
+        await ctx.prisma.quizAttempt.update({
+          where: { id: attempt.id },
+          data: { score },
+        });
+      }
       return score;
     }),
 });
