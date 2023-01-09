@@ -39,35 +39,41 @@ const QuizPage: NextPage = () => {
       </div>
       <div className="w-72">
         <p className="text-center text-lg">Leaderboards</p>
-        <div className="mb-1 mt-4 flex">
-          <div className="flex w-12 justify-center">
-            <TrophyIcon className="h-6 w-6 text-zinc-500" />
-          </div>
-          <div className="flex flex-1 justify-between pl-4">
-            <div className="flex-1 text-center">User</div>
-            <div className="w-12 text-center">Score</div>
-          </div>
-        </div>
-        {leaderboard?.map((attempt, index) => {
-          return (
-            <div
-              key={attempt.id}
-              className={`flex ${
-                index === 0
-                  ? "bg-yellow-500 text-lg font-bold text-yellow-50"
-                  : index === 1
-                  ? "bg-slate-500 font-bold text-slate-100"
-                  : ""
-              }`}
-            >
-              <div className="flex w-12 justify-center">{index + 1}</div>
+        {leaderboard?.length === 0 ? (
+          <div className="mt-4 text-center text-red-700">No attempts yet</div>
+        ) : (
+          <>
+            <div className="mb-1 mt-4 flex">
+              <div className="flex w-12 justify-center">
+                <TrophyIcon className="h-6 w-6 text-zinc-500" />
+              </div>
               <div className="flex flex-1 justify-between pl-4">
-                <div>{attempt.user.username}</div>
-                <div className="w-12 text-center">{attempt.score}</div>
+                <div className="flex-1 text-center">User</div>
+                <div className="w-12 text-center">Score</div>
               </div>
             </div>
-          );
-        })}
+            {leaderboard?.map((attempt, index) => {
+              return (
+                <div
+                  key={attempt.id}
+                  className={`flex ${
+                    index === 0
+                      ? "bg-yellow-500 text-lg font-bold text-yellow-50"
+                      : index === 1
+                      ? "bg-slate-500 font-bold text-slate-100"
+                      : ""
+                  }`}
+                >
+                  <div className="flex w-12 justify-center">{index + 1}</div>
+                  <div className="flex flex-1 justify-between pl-4">
+                    <div>{attempt.user.username}</div>
+                    <div className="w-12 text-center">{attempt.score}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );

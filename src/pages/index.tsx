@@ -2,9 +2,12 @@ import { type NextPage } from "next";
 
 import { trpc } from "../utils/trpc";
 import Link from "next/link";
+import Loading from "../components/Loading";
 
 const Home: NextPage = () => {
-  const { data } = trpc.quiz.getQuizzes.useQuery();
+  const { data, isLoading, isError } = trpc.quiz.getQuizzes.useQuery();
+  if (isLoading) return <Loading />;
+  if (isError) return <div>Error</div>;
   return (
     <div className="mt-14 w-screen">
       <h1 className="hidden text-center">Homepage</h1>
