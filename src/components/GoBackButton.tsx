@@ -8,7 +8,7 @@ const GoBackButton: FC = () => {
   return (
     <button
       type="button"
-      className="flex items-baseline gap-1 text-sm text-red-600"
+      className="flex items-baseline gap-1 text-sm text-red-600 decoration-red-600 hover:underline"
       onClick={() => {
         router.push(router.asPath.split("/").slice(0, -1).join("/"));
       }}
