@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const questionRouter = router({
@@ -7,6 +7,8 @@ export const questionRouter = router({
     .input(
       z.object({
         content: z.string(),
+        tag: z.string(),
+        difficulty: z.enum(["Easy", "Medium", "Hard"]),
         answers: z.array(
           z.object({
             content: z.string(),
@@ -19,6 +21,8 @@ export const questionRouter = router({
       const question = await ctx.prisma.question.create({
         data: {
           content: input.content,
+          difficulty: input.difficulty,
+          tag_id: input.tag,
           user_id: ctx.session.user.id,
         },
       });
@@ -72,4 +76,7 @@ export const questionRouter = router({
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.question.delete({ where: { id: input.id } });
     }),
+  getTags: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.tag.findMany({});
+  }),
 });

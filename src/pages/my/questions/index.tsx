@@ -60,9 +60,18 @@ const QuestionPage: NextPage = () => {
             return (
               <Link
                 key={question.id}
-                className="flex w-80 flex-col rounded-2xl border border-amber-400 bg-amber-300 px-6 py-3 hover:bg-amber-200"
+                className="relative flex w-80 flex-col overflow-hidden rounded-2xl border border-amber-400 bg-amber-300 px-6 py-3 hover:bg-amber-200"
                 href={`/my/questions/${question.id}`}
               >
+                <div
+                  className={`absolute left-0 top-0 h-full w-4 ${
+                    question.difficulty === "Easy"
+                      ? "bg-green-500"
+                      : question.difficulty === "Medium"
+                      ? "bg-yellow-500"
+                      : "bg-red-600"
+                  }`}
+                />
                 <p className="text-xl font-semibold text-amber-800">
                   {question.content}
                 </p>

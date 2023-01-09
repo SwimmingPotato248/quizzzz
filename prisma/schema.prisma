@@ -15,14 +15,14 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(uuid())
-  username    String        @unique
-  password    String
-  role        Role          @default(User)
-  created_at  DateTime      @default(now())
-  questions   Question[]
-  quizzes     Quiz[]
-  QuizAttempt QuizAttempt[]
+  id            String        @id @default(uuid())
+  username      String        @unique
+  password      String
+  role          Role          @default(User)
+  created_at    DateTime      @default(now())
+  questions     Question[]
+  quizzes       Quiz[]
+  quiz_attempts QuizAttempt[]
 }
 
 enum Role {
@@ -50,13 +50,32 @@ model Question {
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
 
+  tag    Tag    @relation(fields: [tag_id], references: [id])
+  tag_id String
+
   content String
   answers Answer[]
   quizzes Quiz[]
 
+  difficulty Difficulty
+
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   QuizAttemptDetail QuizAttemptDetail[]
+}
+
+enum Difficulty {
+  Easy
+  Medium
+  Hard
+}
+
+model Tag {
+  id         String   @id @default(uuid())
+  name       String
+  created_at DateTime @default(now())
+
+  questions Question[]
 }
 
 model Answer {

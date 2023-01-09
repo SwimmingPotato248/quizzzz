@@ -15,6 +15,8 @@ const answers = z.object({
 
 const formSchema = z.object({
   content: z.string().min(1),
+  tag: z.string().min(1),
+  difficulty: z.enum(["Easy", "Medium", "Hard"]),
   answers: z.array(answers),
 });
 
@@ -28,6 +30,8 @@ const CreateQuestionForm: FC = () => {
       setIsOpen(true);
     },
   });
+
+  const { data: tags } = trpc.question.getTags.useQuery();
 
   const { register, handleSubmit, control, reset } = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -65,6 +69,44 @@ const CreateQuestionForm: FC = () => {
             rows={4}
           ></textarea>
         </label>
+        <label>
+          <p>Tag</p>
+          <button type="button">Add a new tag</button>
+          <select
+            {...register("tag")}
+            className="w-full rounded border-amber-700 focus:border-amber-700 focus:ring-amber-600"
+          >
+            <option value="">--Select tag--</option>
+            {tags?.map((tag) => {
+              return (
+                <option key={tag.id} value={tag.id}>
+                  {tag.name}
+                </option>
+              );
+            })}
+          </select>
+        </label>
+        <div>
+          <p>Difficulty</p>
+          <div className="flex justify-between">
+            <label className="flex items-center gap-2">
+              <input {...register("difficulty")} type="radio" value={"Easy"} />
+              <p>Easy</p>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                {...register("difficulty")}
+                type="radio"
+                value={"Medium"}
+              />
+              <p>Medium</p>
+            </label>
+            <label className="flex items-center gap-2">
+              <input {...register("difficulty")} type="radio" value={"Hard"} />
+              <p>Hard</p>
+            </label>
+          </div>
+        </div>
         <div className="flex flex-col gap-2">
           {fields.map((field, index) => {
             return (

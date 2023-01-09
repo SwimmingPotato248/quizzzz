@@ -1,4 +1,5 @@
 import GoBackButton from "@/src/components/GoBackButton";
+import Loading from "@/src/components/Loading";
 import { trpc } from "@/src/utils/trpc";
 import { Dialog } from "@headlessui/react";
 import { TrashIcon } from "@heroicons/react/24/solid";
@@ -11,12 +12,14 @@ const QuestionDetailPage: NextPage = () => {
   const { id } = router.query;
   const [isOpen, setIsOpen] = useState(false);
   if (typeof id !== "string") return <div>Error</div>;
-  const { data } = trpc.question.getOne.useQuery({ id });
+  const { data, isLoading } = trpc.question.getOne.useQuery({ id });
   const { mutate } = trpc.question.delete.useMutation({
     onSuccess() {
       router.push(router.asPath.split("/").slice(0, -1).join("/"));
     },
   });
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className="mx-auto mt-12 w-96">
