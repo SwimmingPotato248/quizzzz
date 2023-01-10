@@ -79,4 +79,9 @@ export const questionRouter = router({
   getTags: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.tag.findMany({});
   }),
+  addTags: protectedProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.tag.create({ data: { name: input.name } });
+    }),
 });

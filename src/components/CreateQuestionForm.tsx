@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, type FC, Fragment } from "react";
+import { useState, type FC, Fragment, useRef } from "react";
 import { type SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { ArrowLeftIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
@@ -24,14 +24,25 @@ type FormSchemaType = z.infer<typeof formSchema>;
 
 const CreateQuestionForm: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAddingTag, setIsAddingTag] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const tagInputRef = useRef<HTMLInputElement>(null);
   const { mutate } = trpc.question.create.useMutation({
     onSuccess() {
       setIsOpen(true);
     },
   });
 
-  const { data: tags } = trpc.question.getTags.useQuery();
+  const { data: tags, refetch } = trpc.question.getTags.useQuery();
+  const { mutate: addTag } = trpc.question.addTags.useMutation({
+    onSuccess() {
+      refetch();
+    },
+    onSettled() {
+      setIsAddingTag(false);
+      setSubmitting(false);
+    },
+  });
 
   const { register, handleSubmit, control, reset } = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -71,7 +82,6 @@ const CreateQuestionForm: FC = () => {
         </label>
         <label>
           <p>Tag</p>
-          <button type="button">Add a new tag</button>
           <select
             {...register("tag")}
             className="w-full rounded border-amber-700 focus:border-amber-700 focus:ring-amber-600"
@@ -85,6 +95,17 @@ const CreateQuestionForm: FC = () => {
               );
             })}
           </select>
+          <div>
+            {"Don't find your tag? Click "}
+            <button
+              type="button"
+              className="inline text-blue-600 underline"
+              onClick={() => setIsAddingTag(true)}
+            >
+              here
+            </button>{" "}
+            to add a new tag
+          </div>
         </label>
         <div>
           <p>Difficulty</p>
@@ -152,6 +173,8 @@ const CreateQuestionForm: FC = () => {
           {submitting ? <Spinner /> : "Create Question"}
         </button>
       </form>
+
+      {/* Question created modal */}
       <Transition
         as={Fragment}
         show={isOpen}
@@ -175,7 +198,7 @@ const CreateQuestionForm: FC = () => {
             <Dialog.Panel
               className={"w-96 rounded-xl bg-slate-100 p-4 text-slate-800"}
             >
-              <Dialog.Title className={"mb-4 text-xl font-bold"}>
+              <Dialog.Title className={"mb-4 text-3xl font-bold"}>
                 Question created
               </Dialog.Title>
               <Dialog.Description>
@@ -201,6 +224,72 @@ const CreateQuestionForm: FC = () => {
                   Create more
                 </button>
               </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Add tag modal */}
+      <Transition
+        as={Fragment}
+        show={isAddingTag}
+        enter="transition-opacity duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-200"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <Dialog
+          open={isAddingTag}
+          onClose={() => {
+            setSubmitting(false);
+            setIsAddingTag(false);
+          }}
+          className="relative z-50"
+        >
+          <div className="fixed inset-0 bg-black/75" aria-hidden="true" />
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <Dialog.Panel
+              className={"w-96 rounded-xl bg-slate-100 p-4 text-slate-800"}
+            >
+              <Dialog.Title className={"mb-4 text-center text-2xl font-bold"}>
+                Create a new tag
+              </Dialog.Title>
+              <Dialog.Description>
+                <form>
+                  <input
+                    placeholder="Enter your tag"
+                    type={"text"}
+                    className="w-full"
+                    ref={tagInputRef}
+                    required
+                  />
+                  <div className="mt-2 flex w-full items-center justify-end gap-4 pr-4">
+                    <button
+                      type="submit"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (tagInputRef.current?.value) {
+                          setSubmitting(true);
+                          addTag({ name: tagInputRef.current.value });
+                        }
+                      }}
+                      disabled={submitting}
+                      className="rounded-full border border-sky-600 bg-sky-700 px-4 py-2 font-bold text-sky-100 hover:bg-sky-600"
+                    >
+                      {submitting ? <Spinner /> : "Add tag"}
+                    </button>
+                    <button
+                      type="button"
+                      className="hover:underline"
+                      onClick={() => setIsAddingTag(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </Dialog.Description>
             </Dialog.Panel>
           </div>
         </Dialog>
