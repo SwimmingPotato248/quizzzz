@@ -48,14 +48,23 @@ export const questionRouter = router({
       await ctx.prisma.answer.createMany({ data: answers });
     }),
   getQuestions: protectedProcedure
-    .input(z.object({ query: z.string() }))
+    .input(
+      z.object({
+        content: z.string(),
+        difficulty: z.array(z.enum(["Easy", "Medium", "Hard"])),
+        tag: z.string(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.question.findMany({
         where: {
           user_id: ctx.session.user.id,
-          content: { contains: input.query, mode: "insensitive" },
+          content: { contains: input.content, mode: "insensitive" },
+          difficulty: { in: input.difficulty },
+          tag_id: input.tag ? input.tag : undefined,
         },
         orderBy: { created_at: "desc" },
+        include: { tag: true },
       });
     }),
   getOne: protectedProcedure

@@ -39,7 +39,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           )}
         </div>
       </nav>
-      <main className="flex-grow bg-amber-100 text-amber-800">{children}</main>
+      <main className="flex-grow bg-amber-50 text-amber-800">{children}</main>
     </div>
   );
 };

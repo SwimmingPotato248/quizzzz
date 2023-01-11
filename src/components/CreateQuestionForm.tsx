@@ -24,7 +24,7 @@ type FormSchemaType = z.infer<typeof formSchema>;
 
 const CreateQuestionForm: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAddingTag, setIsAddingTag] = useState(true);
+  const [isAddingTag, setIsAddingTag] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const tagInputRef = useRef<HTMLInputElement>(null);
   const { mutate } = trpc.question.create.useMutation({
