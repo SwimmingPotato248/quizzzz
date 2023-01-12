@@ -35,6 +35,7 @@ const defaultQuery: QuerySchema = {
 const CreateQuizForm: FC = () => {
   const [query, setQuery] = useState(defaultQuery);
   const router = useRouter();
+  const { data: questions } = trpc.question.getQuestions.useQuery(defaultQuery);
   const { data, isLoading } = trpc.question.getQuestions.useQuery(query);
   const { data: tags } = trpc.question.getTags.useQuery();
   const { mutate } = trpc.quiz.create.useMutation({
@@ -98,37 +99,33 @@ const CreateQuizForm: FC = () => {
           <p>Selected questions</p>
           {selected.length !== 0 ? (
             <div className="divide-y divide-emerald-700">
-              {isLoading ? (
-                <Loading />
-              ) : (
-                data
-                  ?.filter((question) =>
-                    selected.some((e) => e.id === question.id)
-                  )
-                  .map((question) => {
-                    return (
-                      <div
-                        key={question.id}
-                        className="flex justify-between p-2 text-lg"
-                      >
-                        <p>{question.content}</p>
-                        <div>
-                          <button
-                            className="rounded-full bg-red-600 p-1"
-                            type="button"
-                            onClick={() => {
-                              setSelected((prev) =>
-                                prev.filter((e) => e.id !== question.id)
-                              );
-                            }}
-                          >
-                            <MinusIcon className="h-3 w-3 text-red-100" />
-                          </button>
-                        </div>
+              {questions
+                ?.filter((question) =>
+                  selected.some((e) => e.id === question.id)
+                )
+                .map((question) => {
+                  return (
+                    <div
+                      key={question.id}
+                      className="flex justify-between p-2 text-lg"
+                    >
+                      <p>{question.content}</p>
+                      <div>
+                        <button
+                          className="rounded-full bg-red-600 p-1"
+                          type="button"
+                          onClick={() => {
+                            setSelected((prev) =>
+                              prev.filter((e) => e.id !== question.id)
+                            );
+                          }}
+                        >
+                          <MinusIcon className="h-3 w-3 text-red-100" />
+                        </button>
                       </div>
-                    );
-                  })
-              )}
+                    </div>
+                  );
+                })}
             </div>
           ) : (
             <div className="my-2 bg-red-100 py-1 text-center text-red-700">
@@ -209,46 +206,52 @@ const CreateQuizForm: FC = () => {
           </div>
         </form>
         <div className="divide-y divide-emerald-600">
-          {data
-            ?.filter((question) => !selected.some((e) => e.id === question.id))
-            .map((question) => {
-              return (
-                <div
-                  key={question.id}
-                  className="relative flex items-center justify-between py-2 px-3"
-                >
+          {isLoading ? (
+            <Loading />
+          ) : (
+            data
+              ?.filter(
+                (question) => !selected.some((e) => e.id === question.id)
+              )
+              .map((question) => {
+                return (
                   <div
-                    className={`absolute left-0 top-0 h-full w-3 ${
-                      question.difficulty === "Easy"
-                        ? "bg-green-500"
-                        : question.difficulty === "Medium"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                    }`}
-                  />
-                  <div className="pl-2">
-                    <p className="text-xl">{question.content}</p>
-                    <p className="text-sm text-gray-500">
-                      {question.difficulty} {question.tag.name.toLowerCase()}{" "}
-                      question
-                    </p>
+                    key={question.id}
+                    className="relative flex items-center justify-between py-2 px-3"
+                  >
+                    <div
+                      className={`absolute left-0 top-0 h-full w-3 ${
+                        question.difficulty === "Easy"
+                          ? "bg-green-500"
+                          : question.difficulty === "Medium"
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
+                    />
+                    <div className="pl-2">
+                      <p className="text-xl">{question.content}</p>
+                      <p className="text-sm text-gray-500">
+                        {question.difficulty} {question.tag.name.toLowerCase()}{" "}
+                        question
+                      </p>
+                    </div>
+                    <div>
+                      <button
+                        className="rounded-full bg-green-500 p-1"
+                        type="button"
+                        onClick={() => {
+                          setSelected((prev) => {
+                            return [...prev, { id: question.id }];
+                          });
+                        }}
+                      >
+                        <PlusIcon className="h-3 w-3 text-green-100" />
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <button
-                      className="rounded-full bg-green-500 p-1"
-                      type="button"
-                      onClick={() => {
-                        setSelected((prev) => {
-                          return [...prev, { id: question.id }];
-                        });
-                      }}
-                    >
-                      <PlusIcon className="h-3 w-3 text-green-100" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+          )}
         </div>
       </div>
     </div>

@@ -72,7 +72,7 @@ export const questionRouter = router({
     .query(async ({ ctx, input }) => {
       const question = await ctx.prisma.question.findUnique({
         where: { id: input.id },
-        include: { answers: true },
+        include: { answers: true, tag: true },
       });
       if (!question) throw new TRPCError({ code: "NOT_FOUND" });
       if (question.user_id !== ctx.session.user.id) {
@@ -86,7 +86,7 @@ export const questionRouter = router({
       await ctx.prisma.question.delete({ where: { id: input.id } });
     }),
   getTags: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.tag.findMany({});
+    return await ctx.prisma.tag.findMany({ orderBy: { name: "asc" } });
   }),
   addTags: protectedProcedure
     .input(z.object({ name: z.string() }))

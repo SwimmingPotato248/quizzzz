@@ -30,6 +30,9 @@ const QuestionDetailPage: NextPage = () => {
           <p className="text-sm text-zinc-400">
             Created at {data?.created_at.toLocaleString()}
           </p>
+          <p className="text-gray-600">
+            {data?.difficulty} {data?.tag.name.toLowerCase()} question
+          </p>
         </div>
         <button type="button" onClick={() => setIsOpen(true)}>
           <TrashIcon className="h-6 w-6 text-red-500  hover:text-red-600" />
