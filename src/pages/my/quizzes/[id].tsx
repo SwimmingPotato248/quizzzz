@@ -1,6 +1,7 @@
 import GoBackButton from "@/src/components/GoBackButton";
 import { trpc } from "@/src/utils/trpc";
 import { type NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const QuizDetailPage: NextPage = () => {
@@ -24,8 +25,13 @@ const QuizDetailPage: NextPage = () => {
           <ul className="divide-y-2 divide-red-600">
             {data?.questions.map((question) => {
               return (
-                <li key={question.id} className="p-2 ">
-                  <p className="text-lg text-rose-600">{question.content}</p>
+                <li key={question.id} className="p-2">
+                  <Link
+                    href={`/my/questions/${question.id}`}
+                    className="text-lg text-rose-600"
+                  >
+                    {question.content}
+                  </Link>
                 </li>
               );
             })}

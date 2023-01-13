@@ -19,7 +19,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         <div className="flex gap-4 px-2">
           {session?.user ? (
             <>
-              <Link href={"/my/questions"}>{session.user.name}</Link>
+              <Link href={"/my"}>{session.user.name}</Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="hover:text-amber-900"

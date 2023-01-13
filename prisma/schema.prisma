@@ -110,9 +110,9 @@ model QuizAttemptDetail {
   quiz_attempt_id String
 
   question    Question @relation(fields: [question_id], references: [id])
-  answer      Answer   @relation(fields: [answer_id], references: [id])
   question_id String
-  answer_id   String
+  answer      Answer?  @relation(fields: [answer_id], references: [id])
+  answer_id   String?
 
   correct Boolean
 }

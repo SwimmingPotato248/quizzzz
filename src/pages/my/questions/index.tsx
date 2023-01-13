@@ -1,3 +1,4 @@
+import GoBackButton from "@/src/components/GoBackButton";
 import Loading from "@/src/components/Loading";
 import { trpc } from "@/src/utils/trpc";
 import { XMarkIcon } from "@heroicons/react/24/solid";
@@ -39,6 +40,7 @@ const QuestionPage: NextPage = () => {
   };
   return (
     <div className="mx-auto mt-16 w-max">
+      <GoBackButton />
       <Link
         href={"/my/questions/new"}
         className="mx-auto mb-4 block w-72 bg-lime-500 py-2 text-center text-lg font-bold text-lime-100 hover:bg-lime-600"

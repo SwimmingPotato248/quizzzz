@@ -60,6 +60,7 @@ const TakeQuizPage: NextPage = () => {
 
   const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
     setIsSubmitting(true);
+    console.log(data);
     mutate({ quiz_id: id, answers: data.answers });
   };
 

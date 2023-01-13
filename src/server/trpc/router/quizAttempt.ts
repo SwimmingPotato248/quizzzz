@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const quizAttemptRouter = router({
   submitAttempt: publicProcedure
@@ -31,7 +31,8 @@ export const quizAttemptRouter = router({
           (e) => e.status === true
         )?.id;
         return {
-          ...answer,
+          question_id: answer.question_id,
+          answer_id: answer.answer_id ? answer.answer_id : null,
           correct: answer.answer_id === correct_answer_id,
         };
       });
@@ -66,4 +67,11 @@ export const quizAttemptRouter = router({
         take: 10,
       });
     }),
+  getHistory: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.quizAttempt.findMany({
+      where: { user_id: ctx.session.user.id },
+      include: { quiz: true, _count: { select: { QuizAttemptDetail: true } } },
+      orderBy: { created_at: "desc" },
+    });
+  }),
 });

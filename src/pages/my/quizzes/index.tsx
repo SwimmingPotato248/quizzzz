@@ -1,3 +1,4 @@
+import GoBackButton from "@/src/components/GoBackButton";
 import { trpc } from "@/src/utils/trpc";
 import { type NextPage } from "next";
 import Link from "next/link";
@@ -7,6 +8,7 @@ const QuizzesPage: NextPage = () => {
   console.log(data);
   return (
     <div className="mx-auto mt-14 flex w-96 flex-col divide-y-2 divide-sky-500">
+      <GoBackButton />
       <div className="py-2">
         <Link
           href={"/my/quizzes/new"}
